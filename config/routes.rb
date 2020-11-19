@@ -1,16 +1,15 @@
 Rails.application.routes.draw do
-  get 'records/index'
-  get 'records/new'
-  get 'records/create'
-  get 'records/show'
-  get 'records/edit'
-  get 'records/update'
-  get 'records/destroy'
-  get 'records/index'
-  get 'records/new'
-  get 'records/create'
-  get 'records/show'
-  get 'records/edit'
-  get 'records/update'
-  # For details on the DSL available within this file, see https://guides.rubyonrails.org/routing.html
+  devise_for :users
+  root to: "records#index"
+  resources :records do
+    resource :favorites, only: [:create, :destroy]
+    resources :comments, only: :create
+    # ネストする理由は、お気に入り時にforeign_keyの一つであるpost_idを取得するのが楽になるから(foreign_keyを取得しないとリレーションができない)
+    # favoriteの詳細ページは作らない、つまりfaboriteのidは要らず省略したいため、resourceと、単数系のメソッドを利用している
+    collection do
+      get 'search'
+    end
+  end
+  resources :users, only: :show
+  resources :relationships, only: [:create, :destroy]
 end
